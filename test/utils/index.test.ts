@@ -971,6 +971,7 @@ test('formatV2rayConfig', t => {
     nodeName: '测试 4',
     path: '/',
     port: 8080,
+    udp: true,
     tls: true,
     tls13: true,
     skipCertVerify: true,
@@ -1031,6 +1032,7 @@ test('formatV2rayConfig', t => {
       protocol: 'socks',
       settings: {
         auth: 'noauth',
+        udp: true,
       }
     },
     outbound: {

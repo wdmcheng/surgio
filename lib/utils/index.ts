@@ -484,6 +484,10 @@ export const getSurgeNodes = (
               );
             }
 
+            if (typeof config['udp-relay'] === 'boolean') {
+              configList.push(`udp-relay=${config['udp-relay']}`);
+            }
+
             if (typeof config.tfo === 'boolean') {
               configList.push(`tfo=${config.tfo}`);
             }
@@ -596,6 +600,9 @@ export const getClashNodes = (
             port: nodeConfig.port,
             uuid: nodeConfig.uuid,
             alterId: nodeConfig.alterId,
+            ...(typeof nodeConfig.udp === 'boolean' ? {
+              udp: nodeConfig.udp
+            } : null),
             ...(nodeConfig.network === 'tcp' ? null : {
               network: nodeConfig.network,
             }),
@@ -616,6 +623,9 @@ export const getClashNodes = (
             type: 'ssr',
             name: nodeConfig.nodeName,
             server: nodeConfig.hostname,
+            ...(typeof nodeConfig['udp-relay'] === 'boolean' ? {
+              udp: nodeConfig['udp-relay']
+            } : null),
             port: nodeConfig.port,
             password: nodeConfig.password,
             obfs: nodeConfig.obfs,
@@ -914,7 +924,7 @@ export const getQuantumultXNodes = (
               `method=chacha20-ietf-poly1305` :
               `method=${nodeConfig.method}`),
             `password=${nodeConfig.uuid}`,
-            'udp-relay=true',
+            `udp-relay=${nodeConfig.udp || true}`,
             ...(nodeConfig.tfo ? [
               `fast-open=${nodeConfig.tfo}`,
             ] : []),
@@ -1209,6 +1219,9 @@ export const formatV2rayConfig = (localPort: string|number, nodeConfig: VmessNod
       protocol: 'socks',
       settings: {
         auth: 'noauth',
+        ...(typeof nodeConfig.udp === 'boolean' ? {
+          udp: nodeConfig.udp,
+        } : null),
       }
     },
     outbound: {
