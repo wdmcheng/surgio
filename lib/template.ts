@@ -92,6 +92,37 @@ export default function getEngine(templateDir: string, publicUrl: string): nunju
   // json
   engine.addFilter('json', (obj: JsonObject) => JSON.stringify(obj));
 
+  engine.addFilter('hostname', (str: string) => {
+    const array = str.split('\n');
+
+    // 取出第一个 hostname 配置
+    return array
+    .filter(item => {
+      const testString: string = (!!item && item.trim() !== '') ? item : '';
+      return testString.startsWith('hostname');
+    })[0];
+  });
+
+  engine.addFilter('surgeUrlRewrite', (str: string) => {
+    const array = convertUrlRewriteSnippet(str);
+    return array
+    .filter(parts => {
+      if (!parts || parts.length !== 4) {
+        return false;
+      }
+      if (parts[1] !== 'url') {
+        return false;
+      }
+      return parts[2] === '302' || parts[2] === '307';
+    })
+    .map(parts => {
+      const result = [];
+      result.push(parts[0], parts[3], parts[2]);
+      return result.join(' ');
+    })
+    .join('\n');
+  });
+
   return engine;
 };
 
@@ -115,5 +146,23 @@ export const convertSurgeScriptRuleToQuantumultXRewriteRule = (str: string, publ
     default:
       return '';
   }
+
+};
+
+export const convertUrlRewriteSnippet = (str: string): ReadonlyArray<readonly string[]> => {
+  const array = str.split('\n');
+
+  return array
+  .filter(item => {
+    const testString: string = (!!item && item.trim() !== '') ? item : '';
+    // 忽略 hostname 配置
+    return !testString.startsWith('hostname');
+  })
+  .map((item: string) => {
+    const parts = item.trim().split(' ');
+    const result = [];
+    parts.filter(part => part && part.trim() !== '').forEach(part => result.push(part));
+    return result;
+  });
 
 };
