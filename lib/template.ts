@@ -50,6 +50,11 @@ export default function getEngine(templateDir: string, publicUrl: string): nunju
           return item;
         }
 
+        // 忽略 IP-CIDR6
+        if (testString.startsWith('IP-CIDR6')) {
+          return false;
+        }
+
         // 过滤出支持的规则类型
         return QUANTUMULT_X_SUPPORTED_RULE.some(s => testString.startsWith(s));
       })
