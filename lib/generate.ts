@@ -297,9 +297,31 @@ export async function generate(
     customFilters,
     customParams: customParams || {},
     ...(artifact.proxyGroupModifier ? {
-      clashProxyConfig: {
+      clashProxyConfigOld: {
         Proxy: getClashNodes(nodeList),
         'Proxy Group': normalizeClashProxyGroupConfig(
+          nodeList,
+          {
+            usFilter,
+            hkFilter,
+            japanFilter,
+            koreaFilter,
+            singaporeFilter,
+            taiwanFilter,
+            netflixFilter,
+            youtubePremiumFilter,
+            ...customFilters,
+          },
+          artifact.proxyGroupModifier,
+          {
+            proxyTestUrl: config.proxyTestUrl,
+            proxyTestInterval: config.proxyTestInterval,
+          },
+        ),
+      },
+      clashProxyConfig: {
+        proxies: getClashNodes(nodeList),
+        'proxy-groups': normalizeClashProxyGroupConfig(
           nodeList,
           {
             usFilter,
